@@ -5,4 +5,5 @@ export interface User {
   name: string
   company: string
   followers: number
+  bio: string
 }

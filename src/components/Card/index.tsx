@@ -1,18 +1,36 @@
+import { useMemo } from 'react'
 import { Issue } from '../../interfaces/issue'
 import * as S from './styles'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { niceTime } from '../../utils/formatter'
 
 interface CardProps {
   issue: Issue
 }
 
 const Card = ({ issue }: CardProps) => {
+  const issueFormmated = useMemo(() => {
+    return {
+      ...issue,
+      formmatedDate: niceTime(issue.created_at),
+    }
+  }, [issue])
   return (
-    <S.CardContainer>
+    <S.CardContainer to={`/issues/${issue.number}`}>
       <S.CardHeader>
-        <h2>{issue.title}</h2>
-        <span>{issue.created_at}</span>
+        <h2>{issueFormmated.title}</h2>
+        <span>{issueFormmated.formmatedDate}</span>
       </S.CardHeader>
-      <S.CardDescription>{issue.body}</S.CardDescription>
+      <S.CardDescription>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          allowedElements={['p']}
+          skipHtml
+        >
+          {issueFormmated.body}
+        </ReactMarkdown>
+      </S.CardDescription>
     </S.CardContainer>
   )
 }
